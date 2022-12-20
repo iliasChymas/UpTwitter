@@ -1,7 +1,7 @@
 import Twit from 'twit'
 import fs from 'fs'
 
-const TWEET_DELAY = 40000
+const TWEET_DELAY = 80000
 function getRandomNuber(max) {
   return Math.floor(Math.random() * max)
 }
@@ -46,7 +46,7 @@ const postTweet = (status, ptid, image, attachmentUrl) => {
 
 const getTweetsForHashtag = (hashtag, count) => {
   return new Promise((resolve, reject) => {
-    T.get('search/tweets', { q: `#${hashtag}`, count: count, reslut_type: 'recent' }, function(err, data, _response) {
+    T.get('search/tweets', { q: `${hashtag}`, count: count, reslut_type: 'recent' }, function(err, data, _response) {
       if (err) {
         reject(err)
       }
