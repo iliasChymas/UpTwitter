@@ -5,9 +5,10 @@ const TWEET_DELAY = 80000
 function getRandomNuber(max) {
   return Math.floor(Math.random() * max)
 }
+
 const T = new Twit({
-  consumer_secret: process.env.consumer_secret,
   consumer_key: process.env.consumer_key,
+  consumer_secret: process.env.consumer_secret,
   access_token: process.env.access_token,
   access_token_secret: process.env.access_token_secret,
   timeout_ms: process.env.timeout_ms,
@@ -55,7 +56,7 @@ const getTweetsForHashtag = (hashtag, count) => {
   })
 }
 
-const main = async (config) => {
+const main = async () => {
   let blacklisted = JSON.parse(fs.readFileSync("cache.json", 'utf-8')) || []
   let postData = JSON.parse(fs.readFileSync("data.json", 'utf-8'))
 
