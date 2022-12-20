@@ -8,6 +8,4 @@ config.js:
   This file is where you input your API key, API secret (also known as the consumer key), access token, and access token secret. These can be found on the developer portal on Twitter.com.
 
 Main.js: 
-  The total number of tweets that the script will reply to is determined by the count properties in data.json. For example, if you have three different items with a count of 100, the script will reply to 300 posts. To avoid rate limiting, the script makes a reply every 40 seconds.#� �T�w�i�t�t�e�r� �j�o�b� �f�o�r� �U�p�W�o�r�k�
-�
-�
+  The total number of tweets that the script will reply to is determined by the count properties in data.json. For example, if you have three different items with a count of 100, the script will reply to 300 posts. To avoid rate limiting, the script makes a reply every 40 seconds.
