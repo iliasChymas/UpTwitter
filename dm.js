@@ -1,6 +1,6 @@
 import Twit from "twit"
 import { configs, handlesToDm } from './config.js'
-import { parse } from 'csv-parse'
+import { parse } from 'csv-parse/sync'
 import fs from "fs"
 const T = Twit(configs[0]);
 
@@ -50,8 +50,6 @@ const sendMessage = (text, uid, imageId) => {
       }
     }
   }
-
-  console.log(data) 
   return new Promise((reject, resolve) => {
     T.post("direct_messages/events/new", data, function(data, err, _response) {
       if (err) reject(err)
@@ -60,27 +58,43 @@ const sendMessage = (text, uid, imageId) => {
   })
 }
 
-fs.createReadStream("./messages.csv")
-  .pipe(parse({ delimiter: ",", from_line: 2 }))
-  .on("data", async function(row) {
-    let user = await getUserInfo(row[1])
-    if (row[3] === "") {
-      await sendMessage(row[2], user.id)
-    } else {
-      let imageId = undefined
-      try {
-        imageId = await ImageUpload(row[3])
-      }catch(err) {
-        console.log("[Error] Could not find " + row[3])
-      }
-      await sendMessage(row[2], user.id, imageId)
-    }
-    await timer(2000)
-  })
-  .on("end", function() {
-    console.log("Every one has been messaged");
-  })
-  .on("error", function(error) {
-    console.log(error.message);
-  });
+const csvRaw = fs.readFileSync("messages.csv")
+let nextRaw;
+try {
+  nextRaw = fs.readFileSync("next.txt")
+}catch (_err) {
+  fs.writeFileSync("next.txt", "")
+  nextRaw = fs.readFileSync("next.txt")
+}
 
+const records = parse(csvRaw, {
+  columns: true,
+  delimiter: ','
+})
+
+let nextIndex = records.findIndex(item => item.handle === String(nextRaw).trim())
+
+if (nextIndex === -1) {
+  nextIndex = 0
+}
+
+for (let i=nextIndex; i<records.length; i++) {
+
+  if (i - nextIndex >= 450 ) {
+    fs.writeFileSync('next.txt', records[i], {encoding: 'utf8', flag:'w'})
+  } 
+
+  let user = await getUserInfo(records[i].handle)
+
+  let imageId = ""
+  try {
+    imageId = ImageUpload(records[i].image)
+  }catch(_err) {
+    if (records[i].image !== "") {
+      console.log("Could not find " + records[i].image)
+    }
+  }
+  await sendMessage(records[i].message, user.id, records[i].image)
+  console.log("[Info] Send message to: " + records[i].handle)
+  
+}
