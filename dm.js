@@ -96,5 +96,5 @@ for (let i=nextIndex; i<records.length; i++) {
   }
   await sendMessage(records[i].message, user.id, records[i].image)
   console.log("[Info] Send message to: " + records[i].handle)
-  
+  await timer(120000) 
 }
